@@ -7,7 +7,7 @@ use \RuntimeException,
 	\ReflectionFunctionAbstract;
 
 /**
- * 
+ * The injector class deals with dependency management as well as object creation and function context invocation.
  */
 class Injector {
 	private $instances = [], $classcache = [], $namecache = [];
@@ -37,21 +37,23 @@ class Injector {
 		$args = [];
 		foreach($ref->getParameters() as $parameter) {
 			$dependency = null;
+
 			// try by typehint first, if that fails try by name
-			$name = null;
 			$cls = $parameter->getClass();
 			if($cls !== null) {
 				$name = $cls->getName();
+				if($name !== null) {
+					$dependency = $this->retrieve($name);
+				}
 			}
-			if($name !== null) {
-				$dependency = $this->retrieve($name);
-			}
+
 			if($dependency === null) {
 				$dependency = $this->retrieve($parameter->getName());
 			}
 
 			if($dependency !== null) {
-				if(is_callable($dependency)) {
+				// TODO better check here--don't call objects with __invoke
+				if(is_callable($dependency) && !is_object($dependency)) {
 					$dependency = $dependency();
 				}
 				$args[$parameter->getPosition()] = $dependency;

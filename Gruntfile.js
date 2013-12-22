@@ -6,7 +6,7 @@ module.exports = function (grunt) {
 		parallelize: { phplint: { app: require('os').cpus().length } },
 		phplint: {
 			options: { swapPath: '/tmp' },
-			app: ['src/**/*.php']
+			app: ['src/**/*.php', 'tests/**/*.php']
 		},
 		phpcs: {
 			app: { dir: 'src' },

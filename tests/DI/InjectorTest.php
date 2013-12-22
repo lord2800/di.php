@@ -3,14 +3,11 @@
 use \Mockery as m;
 
 class InjectorTest extends PHPUnit_Framework_TestCase {
-	private $injector, $dep;
+	private $injector, $dep, $dep2;
 
 	public function setUp() {
 		$this->injector = new DI\Injector();
 		$this->dep = new Dependency;
-	}
-	public function tearDown() {
-		m::close();
 	}
 
 	public function testProvideAndRetrieve() {
@@ -61,8 +58,16 @@ class InjectorTest extends PHPUnit_Framework_TestCase {
 		$dependent2 = $this->injector->instance('Dependent');
 		$this->assertSame($dependent1, $dependent2);
 	}
+
+	public function testDontCallObjectsWithMagicInvoke() {
+		$cb = new CallbackWithInvoke();
+		$this->injector->provide('dep2', $cb);
+		$this->injector->inject(function ($dep2) {});
+		$this->assertFalse($cb->called);
+	}
 }
 
 class Dependency {}
 class Dependent { public $dep; public function __construct(Dependency $dep) { $this->dep = $dep; } }
 class Callback { function called() {} }
+class CallbackWithInvoke { public $called = false; function __invoke() { $this->called = true; } }
