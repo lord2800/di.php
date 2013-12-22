@@ -1,5 +1,6 @@
 <?php
 
+use \Mockery as m;
 
 class InjectorTest extends PHPUnit_Framework_TestCase {
 	private $injector, $dep;
@@ -7,6 +8,9 @@ class InjectorTest extends PHPUnit_Framework_TestCase {
 	public function setUp() {
 		$this->injector = new DI\Injector();
 		$this->dep = new Dependency;
+	}
+	public function tearDown() {
+		m::close();
 	}
 
 	public function testProvideAndRetrieve() {
@@ -22,6 +26,16 @@ class InjectorTest extends PHPUnit_Framework_TestCase {
 			$self->assertEquals($self->dep, $dep);
 		};
 		$cb = $this->injector->inject($fn);
+		$this->assertInstanceOf('Closure', $cb);
+		$cb();
+	}
+
+	public function testInjectShouldSucceedForCallables() {
+		$this->injector->provide('n', $this->dep);
+		$self = $this;
+
+		$m = new Callback();
+		$cb = $this->injector->inject([$m, 'called']);
 		$this->assertInstanceOf('Closure', $cb);
 		$cb();
 	}
@@ -51,3 +65,4 @@ class InjectorTest extends PHPUnit_Framework_TestCase {
 
 class Dependency {}
 class Dependent { public $dep; public function __construct(Dependency $dep) { $this->dep = $dep; } }
+class Callback { function called() {} }

@@ -107,9 +107,18 @@ class Injector {
 	  * @return Closure A no-argument function that will invoke the closure with its' dependencies
 	  */
 	public function inject(callable $closure) {
-		$ref = new ReflectionFunction($closure);
-		$args = $this->internalInject($ref);
-		return function () use($ref, $args) { $ref->invokeArgs($args); };
+		$ref = null;
+		if(is_array($closure)) {
+			$inst = $closure[0];
+			$ref = (new ReflectionClass($inst))->getMethod($closure[1]);
+			$args = $this->internalInject($ref);
+			return function () use($ref, $args, $inst) { $ref->invokeArgs($inst, $args); };
+		} else {
+			$ref = new ReflectionFunction($closure);
+			$args = $this->internalInject($ref);
+			return function () use($ref, $args) { $ref->invokeArgs($args); };
+		}
+		throw new RuntimeException('Unable to determine how to invoke callable');
 	}
 
 	/**
