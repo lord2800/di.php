@@ -1,6 +1,5 @@
 <?php
 
-use \Mockery as m;
 
 class InjectorTest extends PHPUnit_Framework_TestCase {
 	private $injector, $dep;
@@ -8,10 +7,6 @@ class InjectorTest extends PHPUnit_Framework_TestCase {
 	public function setUp() {
 		$this->injector = new DI\Injector();
 		$this->dep = new Dependency;
-	}
-
-	public function tearDown() {
-		m::close();
 	}
 
 	public function testProvideAndRetrieve() {
