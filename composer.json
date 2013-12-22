@@ -3,7 +3,9 @@
     "description": "A dependency injector, rather than a container or service locator.",
     "require-dev": {
         "phpunit/phpunit": "dev-master",
-        "phpunit/phpunit-mock-objects": "dev-master"
+        "mockery/mockery": "dev-master",
+        "squizlabs/php_codesniffer": "dev-master",
+        "scrutinizer/php-analyzer": "dev-master"
     },
     "license": "MIT",
     "authors": [
@@ -13,7 +15,9 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {
-
+    "autoload": {
+        "psr-0": {
+            "DI": "src/"
+        }
     }
 }
