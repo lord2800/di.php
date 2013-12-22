@@ -103,10 +103,10 @@ class Injector {
 
 	/**
 	  * Inject a function and return a closure that will invoke the injected function
-	  * @param Closure [$closure] The closure to inject dependencies into
+	  * @param callable [$closure] The closure to inject dependencies into
 	  * @return Closure A no-argument function that will invoke the closure with its' dependencies
 	  */
-	public function inject(\Closure $closure) {
+	public function inject(callable $closure) {
 		$ref = new ReflectionFunction($closure);
 		$args = $this->internalInject($ref);
 		return function () use($ref, $args) { $ref->invokeArgs($args); };
