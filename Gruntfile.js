@@ -29,7 +29,7 @@ module.exports = function (grunt) {
 		watch: {
 			test: {
 				files: ['tests/**/*.php'],
-				tasks: ['phplint', 'phpunit']
+				tasks: ['phplint', 'phpcs', 'phpunit']
 			}
 		}
 	});
