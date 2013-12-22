@@ -12,7 +12,7 @@ use \RuntimeException,
 class Injector {
 	private $instances = [], $classcache = [], $namecache = [];
 
-	private function getFQCN($class, $namespaces) {
+	private function getFullyQualifiedClassName($class, $namespaces) {
 		$fqn = $class;
 		$exists = class_exists($fqn);
 		if(!$exists) {
@@ -130,7 +130,7 @@ class Injector {
 	 * @return mixed The singleton instance of the specified class
 	 */
 	public function instance($class, array $namespaces = []) {
-		$class = $this->getFQCN($class, $namespaces);
+		$class = $this->getFullyQualifiedClassName($class, $namespaces);
 		if(!isset($this->instances[$class])) {
 			$instance = $this->create($class, $namespaces);
 			$this->instances[$class] = $instance;
@@ -149,7 +149,7 @@ class Injector {
 	 */
 	public function create($class, array $namespaces = []) {
 		$instance = null;
-		$fqn = $this->getFQCN($class, $namespaces);
+		$fqn = $this->getFullyQualifiedClassName($class, $namespaces);
 
 		$ref = new ReflectionClass($fqn);
 		$ctor = $ref->getConstructor();
