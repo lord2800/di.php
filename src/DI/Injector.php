@@ -117,6 +117,11 @@ class Injector {
 			$ref = (new ReflectionClass($inst))->getMethod($closure[1]);
 			$args = $this->internalInject($ref);
 			return function () use($ref, $args, $inst) { return $ref->invokeArgs($inst, $args); };
+		} else if(!($closure instanceof \Closure)) {
+			$cls = new ReflectionClass($closure);
+			$ref = $cls->getMethod('__invoke');
+			$args = $this->internalInject($ref);
+			return function () use($ref, $args, $closure) { return $ref->invokeArgs($closure, $args); };
 		} else {
 			$ref = new ReflectionFunction($closure);
 			$args = $this->internalInject($ref);

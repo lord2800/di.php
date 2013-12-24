@@ -6,6 +6,7 @@ class Dependency {}
 class Dependent { public $dep; public function __construct(Dependency $dep) { $this->dep = $dep; } }
 class Callback { function called() {} }
 class CallbackWithInvoke { public $called = false; function __invoke() { $this->called = true; } }
+class CallbackWithDeps { public $inst; function __invoke(Dependency $dep) { $this->inst->assertInstanceOf('Dependency', $dep); } }
 
 class InjectorTest extends \PHPUnit_Framework_TestCase {
 	private $injector, $dep, $dep2;
@@ -137,5 +138,13 @@ class InjectorTest extends \PHPUnit_Framework_TestCase {
 		$b = $this->injector->create('A', ['two', 'one']);
 		$this->assertNotNull($b);
 		$this->assertInstanceOf('one\\A', $b);
+	}
+
+	public function testInvokableShouldBeInjected() {
+		$this->injector->provide('a', new Dependency());
+		$cb = new CallbackWithDeps();
+		$cb->inst = $this;
+		$fn = $this->injector->inject($cb);
+		$fn();
 	}
 }
