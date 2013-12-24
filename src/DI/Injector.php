@@ -73,17 +73,20 @@ class Injector {
 	 */
 	public function provide($name, $obj) {
 		// store dependencies by class and by name, so you can match by either the typehint or the parameter name
-		$class = get_class($obj);
 		if(isset($this->namecache[$name])) {
 			throw new RuntimeException(sprintf('Duplicate dependency name %s', $name));
 		}
-		if(isset($this->classcache[$class])) {
-			throw new RuntimeException(sprintf('Duplicate dependency class %s', $class));
-		}
 		$this->namecache[$name] = $obj;
-		// don't add closures to the class cache--it's only for concrete instances (which means this won't trip up the isset above, either)
-		if($class !== 'Closure') {
-			$this->classcache[$class] = $obj;
+
+		if(is_object($obj)) {
+			$class = get_class($obj);
+			if(isset($this->classcache[$class])) {
+				throw new RuntimeException(sprintf('Duplicate dependency class %s', $class));
+			}
+			// don't add closures to the class cache--it's only for concrete instances (which means this won't trip up the isset above, either)
+			if($class !== 'Closure' && $class !== 'Generator') {
+				$this->classcache[$class] = $obj;
+			}
 		}
 	}
 
