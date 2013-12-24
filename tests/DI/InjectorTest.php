@@ -65,6 +65,12 @@ class InjectorTest extends PHPUnit_Framework_TestCase {
 		$this->injector->inject(function ($dep2) {});
 		$this->assertFalse($cb->called);
 	}
+
+	public function testInjectShouldReturnTheResultOfInvocation() {
+		$this->injector->provide('b', function () { return true; });
+		$cb = $this->injector->inject(function ($b) { return $b(); });
+		$this->assertTrue($cb());
+	}
 }
 
 class Dependency {}

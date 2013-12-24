@@ -114,11 +114,11 @@ class Injector {
 			$inst = $closure[0];
 			$ref = (new ReflectionClass($inst))->getMethod($closure[1]);
 			$args = $this->internalInject($ref);
-			return function () use($ref, $args, $inst) { $ref->invokeArgs($inst, $args); };
+			return function () use($ref, $args, $inst) { return $ref->invokeArgs($inst, $args); };
 		} else {
 			$ref = new ReflectionFunction($closure);
 			$args = $this->internalInject($ref);
-			return function () use($ref, $args) { $ref->invokeArgs($args); };
+			return function () use($ref, $args) { return $ref->invokeArgs($args); };
 		}
 		throw new RuntimeException('Unable to determine how to invoke callable');
 	}
