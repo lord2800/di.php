@@ -52,8 +52,7 @@ class Injector {
 			}
 
 			if($dependency !== null) {
-				// TODO better check here--don't call objects with __invoke
-				if(is_callable($dependency) && !is_object($dependency)) {
+				if($dependency instanceof \Closure) {
 					$dependency = $dependency();
 				}
 				$args[$parameter->getPosition()] = $dependency;
@@ -162,6 +161,6 @@ class Injector {
 			$args = $this->internalInject($ctor);
 			return $ref->newInstanceArgs($args);
 		}
-
+		return $ref->newInstance();
 	}
 }

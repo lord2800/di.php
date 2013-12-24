@@ -1,12 +1,17 @@
 <?php
 
-use \Mockery as m;
+require_once('namespaces.php');
 
-class InjectorTest extends PHPUnit_Framework_TestCase {
+class Dependency {}
+class Dependent { public $dep; public function __construct(Dependency $dep) { $this->dep = $dep; } }
+class Callback { function called() {} }
+class CallbackWithInvoke { public $called = false; function __invoke() { $this->called = true; } }
+
+class InjectorTest extends \PHPUnit_Framework_TestCase {
 	private $injector, $dep, $dep2;
 
 	public function setUp() {
-		$this->injector = new DI\Injector();
+		$this->injector = new \DI\Injector();
 		$this->dep = new Dependency;
 	}
 
@@ -46,6 +51,17 @@ class InjectorTest extends PHPUnit_Framework_TestCase {
 		$cb = $this->injector->inject($fn);
 	}
 
+	public function testInjectShouldCallClosureDependencies() {
+		$called = false;
+		$p = function () use(&$called) { $called = true; return null; };
+		$this->injector->provide('p', $p);
+		$self = $this;
+		$fn = function ($p) use($self) { $self->assertNull($p); };
+		$cb = $this->injector->inject($fn);
+		$this->assertTrue($called);
+		$cb();
+	}
+
 	public function testCreateShouldInjectTheCtor() {
 		$this->injector->provide('n', $this->dep);
 		$dependent = $this->injector->create('Dependent');
@@ -67,13 +83,59 @@ class InjectorTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function testInjectShouldReturnTheResultOfInvocation() {
-		$this->injector->provide('b', function () { return true; });
+		$this->injector->provide('b', function () {
+			return function () { return true; };
+		});
 		$cb = $this->injector->inject(function ($b) { return $b(); });
 		$this->assertTrue($cb());
 	}
-}
 
-class Dependency {}
-class Dependent { public $dep; public function __construct(Dependency $dep) { $this->dep = $dep; } }
-class Callback { function called() {} }
-class CallbackWithInvoke { public $called = false; function __invoke() { $this->called = true; } }
+	/**
+	  * @expectedException RuntimeException
+	  * @expectedExceptionMessage not found, tried namespaces
+	  */
+	public function testCreateShouldThrowForNonexistentClass() {
+		$b = $this->injector->create('nonexistent');
+		$this->assertNull($b);
+	}
+
+	/**
+	  * @expectedException RuntimeException
+	  * @expectedExceptionMessage not found, tried namespaces
+	  */
+	public function testCreateShouldThrowForNonexistentClassWithNamespaces() {
+		$b = $this->injector->create('nonexistent', ['one', 'two']);
+		$this->assertNull($b);
+	}
+
+	public function testClassWithNoCtorShouldStillInject() {
+		$b = $this->injector->create('Dependency');
+		$this->assertNotNull($b);
+		$this->assertInstanceOf('Dependency', $b);
+	}
+
+	/**
+	  * @expectedException RuntimeException
+	  * @expectedExceptionMessage Duplicate dependency class Dependency
+	  */
+	public function testProvideShouldThrowForDuplicateClass() {
+		$this->injector->provide('d1', new Dependency());
+		$this->injector->provide('d2', new Dependency());
+	}
+
+	/**
+	  * @expectedException RuntimeException
+	  * @expectedExceptionMessage Duplicate dependency name d1
+	  */
+	public function testProvideShouldThrowForDuplicateName() {
+		$this->injector->provide('d1', new Dependency());
+		$this->injector->provide('d1', new Dependency());
+	}
+
+	public function testCreateShouldResolveNamespaces() {
+		$this->injector->provide('b', new one\A());
+		$b = $this->injector->create('A', ['two', 'one']);
+		$this->assertNotNull($b);
+		$this->assertInstanceOf('one\\A', $b);
+	}
+}
