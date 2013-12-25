@@ -4,7 +4,7 @@ php:
 
 env:
   global:
-    secure: "mj8Ptc6Mx0tYQy7qFVMrPThHGhXETdYYk1ElwohKKweVGrIbEdIJA7Fy9GBckq4SjDyxtRJHoSCKznc8l78U06vWnFqJUB4IVGvqfBTneRTHx2ksErJz31TBm6aW6pf7sgHHKoeF5pJ/6sjCq1mlUyAdt7LqfT/OflHbnddYS1I="
+    secure: dXa39Ew3RGgQmQ5uyNPFN/kRQorXqMR8Cc0FPcO9fm/q8tlAT5Nl5QHvgU+Ext7KcSVeWHKnR2kSEd0Ciy1EDBxCcCWqpZBe94uYuYhogBraaRWcllC6SJGNgOEtinp01GJxnEnOfhPfJZbxa9pkN7snq9jPZYlRKcF5b4mBhxY=
 
 install:
  - sudo apt-get install graphviz
