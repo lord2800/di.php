@@ -4,7 +4,8 @@
     "require-dev": {
         "phpunit/phpunit": "dev-master",
         "squizlabs/php_codesniffer": "dev-master",
-        "scrutinizer/php-analyzer": "dev-master"
+        "scrutinizer/scrutinizer": "dev-master",
+        "phpdocumentor/phpdocumentor": "dev-master"
     },
     "license": "MIT",
     "authors": [

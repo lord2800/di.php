@@ -1,4 +1,9 @@
 <?php
+/**
+ * This file describes the Injector class
+ * @package DI
+ * @license MIT
+ */
 namespace DI;
 
 use \RuntimeException,
@@ -8,10 +13,14 @@ use \RuntimeException,
 
 /**
  * The injector class deals with dependency management as well as object creation and function context invocation.
+ * @api
+ * @see http://lord2800.github.io/di.php/coverage/ Code coverage report
  */
 class Injector {
+	/** @internal */
 	private $instances = [], $classcache = [], $namecache = [];
 
+	/** @internal */
 	private function getFullyQualifiedClassName($class, $namespaces) {
 		$fqn = $class;
 		$exists = class_exists($fqn);
@@ -33,6 +42,7 @@ class Injector {
 		return $fqn;
 	}
 
+	/** @internal */
 	private function internalInject(ReflectionFunctionAbstract $ref) {
 		$args = [];
 		foreach($ref->getParameters() as $parameter) {
@@ -66,8 +76,9 @@ class Injector {
 	/**
 	 * Provide a dependency to the injector. You may make use of the dependency either by classname (of the object) or
 	 * by the provided name (in the case of a closure)
-	 * @param string [$name] The name of the dependency being provided
-	 * @param mixed [$obj] The actual object backing the dependency (which may be a closure)
+	 * @api
+	 * @param string $name The name of the dependency being provided
+	 * @param mixed $obj The actual object backing the dependency (which may be a closure)
 	 * @throws RuntimeException If the provided dependency name or class already exists
 	 */
 	public function provide($name, $obj) {
@@ -91,7 +102,7 @@ class Injector {
 
 	/**
 	  * Fetch a dependency provided to the injector.
-	  * @param string [$name] The name of the dependency to retrieve
+	  * @param string $name The name of the dependency to retrieve
 	  * @return mixed The dependency, or null if not found
 	  */
 	public function retrieve($name) {
@@ -107,7 +118,7 @@ class Injector {
 
 	/**
 	  * Inject a function and return a closure that will invoke the injected function
-	  * @param callable [$closure] The closure to inject dependencies into
+	  * @param callable $closure The closure to inject dependencies into
 	  * @return Closure A no-argument function that will invoke the closure with its' dependencies
 	  */
 	public function inject(callable $closure) {
@@ -118,8 +129,7 @@ class Injector {
 			$args = $this->internalInject($ref);
 			return function () use($ref, $args, $inst) { return $ref->invokeArgs($inst, $args); };
 		} else if(!($closure instanceof \Closure)) {
-			$cls = new ReflectionClass($closure);
-			$ref = $cls->getMethod('__invoke');
+			$ref = (new ReflectionClass($closure))->getMethod('__invoke');
 			$args = $this->internalInject($ref);
 			return function () use($ref, $args, $closure) { return $ref->invokeArgs($closure, $args); };
 		} else {
@@ -132,8 +142,8 @@ class Injector {
 
 	/**
 	 * Get an instance of the specified class
-	 * @param string [$class] The name of the class (either full or partial) to look up
-	 * @param array [$namespaces] The list of namespaces to try and retrieve the class from
+	 * @param string $class The name of the class (either full or partial) to look up
+	 * @param string[] $namespaces The list of namespaces to try and retrieve the class from
 	 * @return mixed The singleton instance of the specified class
 	 */
 	public function instance($class, array $namespaces = []) {
@@ -150,8 +160,8 @@ class Injector {
 	/**
 	 * Create a new instance of the specified class
 	 * @see get
-	 * @param string [$class] The name of the class (either full or partial) to look up
-	 * @param array [$namespaces] The list of namespaces to try and retrieve the class from
+	 * @param string $class The name of the class (either full or partial) to look up
+	 * @param string[] $namespaces The list of namespaces to try and retrieve the class from
 	 * @return mixed The instance of the specified class
 	 */
 	public function create($class, array $namespaces = []) {
