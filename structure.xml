@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project title="API Documentation" version="2.2.0&#10;">
+  <partials/>
+  <file path="Injector.php" generated-path="Injector.html" hash="fa3e1323bee2f974abb3fdebb69bd7fc" package="DI">
+    <docblock line="0">
+      <description>This file describes the Injector class</description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="DI"/>
+      <tag name="license" line="0" description="MIT" link="http://opensource.org/licenses/MIT"/>
+    </docblock>
+    <class final="false" abstract="false" namespace="DI" line="19" package="DI">
+      <extends/>
+      <name>Injector</name>
+      <full_name>\DI\Injector</full_name>
+      <docblock line="19">
+        <description>The injector class deals with dependency management as well as object creation and function context invocation.</description>
+        <long-description></long-description>
+        <tag name="api" line="19" description=""/>
+        <tag name="see" line="19" description="Code coverage report" link="\DI\http://lord2800.github.io/di.php/coverage/"/>
+      </docblock>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="DI" line="84" package="DI">
+        <name>provide</name>
+        <full_name>\DI\Injector::provide()</full_name>
+        <docblock line="84">
+          <description>Provide a dependency to the injector. You may make use of the dependency either by classname (of the object) or
+by the provided name (in the case of a closure)</description>
+          <long-description></long-description>
+          <tag name="api" line="84" description=""/>
+          <tag name="param" line="84" description="&lt;p&gt;The name of the dependency being provided&lt;/p&gt;" type="string" variable="$name">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="84" description="&lt;p&gt;The actual object backing the dependency (which may be a closure)&lt;/p&gt;" type="mixed" variable="$obj">
+            <type>mixed</type>
+          </tag>
+          <tag name="throws" line="84" description="If the provided dependency name or class already exists" type="\RuntimeException">
+            <type link="RuntimeException.html">\RuntimeException</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$name</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$obj</name>
+          <default></default>
+          <type>mixed</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="DI" line="108" package="DI">
+        <name>retrieve</name>
+        <full_name>\DI\Injector::retrieve()</full_name>
+        <docblock line="108">
+          <description>Fetch a dependency provided to the injector.</description>
+          <long-description></long-description>
+          <tag name="param" line="108" description="&lt;p&gt;The name of the dependency to retrieve&lt;/p&gt;" type="string" variable="$name">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="108" description="The dependency, or null if not found" type="mixed">
+            <type>mixed</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$name</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="DI" line="124" package="DI">
+        <name>inject</name>
+        <full_name>\DI\Injector::inject()</full_name>
+        <docblock line="124">
+          <description>Inject a function and return a closure that will invoke the injected function</description>
+          <long-description></long-description>
+          <tag name="param" line="124" description="&lt;p&gt;The closure to inject dependencies into&lt;/p&gt;" type="callable" variable="$closure">
+            <type>callable</type>
+          </tag>
+          <tag name="return" line="124" description="A no-argument function that will invoke the closure with its' dependencies" type="\DI\Closure">
+            <type link="Closure.html">\DI\Closure</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$closure</name>
+          <default></default>
+          <type>callable</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="DI" line="149" package="DI">
+        <name>instance</name>
+        <full_name>\DI\Injector::instance()</full_name>
+        <docblock line="149">
+          <description>Get an instance of the specified class</description>
+          <long-description></long-description>
+          <tag name="param" line="149" description="&lt;p&gt;The name of the class (either full or partial) to look up&lt;/p&gt;" type="string" variable="$class">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="149" description="&lt;p&gt;The list of namespaces to try and retrieve the class from&lt;/p&gt;" type="string[]" variable="$namespaces">
+            <type>string[]</type>
+          </tag>
+          <tag name="return" line="149" description="The singleton instance of the specified class" type="mixed">
+            <type>mixed</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$class</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$namespaces</name>
+          <default>array()</default>
+          <type>string[]</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="DI" line="167" package="DI">
+        <name>create</name>
+        <full_name>\DI\Injector::create()</full_name>
+        <docblock line="167">
+          <description>Create a new instance of the specified class</description>
+          <long-description></long-description>
+          <tag name="see" line="167" description="" link="\DI\get"/>
+          <tag name="param" line="167" description="&lt;p&gt;The name of the class (either full or partial) to look up&lt;/p&gt;" type="string" variable="$class">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="167" description="&lt;p&gt;The list of namespaces to try and retrieve the class from&lt;/p&gt;" type="string[]" variable="$namespaces">
+            <type>string[]</type>
+          </tag>
+          <tag name="return" line="167" description="The instance of the specified class" type="mixed">
+            <type>mixed</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$class</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$namespaces</name>
+          <default>array()</default>
+          <type>string[]</type>
+        </argument>
+      </method>
+    </class>
+    <source>eJzdWFtv2zYUfrZ/BQu4tVw4cbunoVm6Ftla5KFDV2QPQxIEtETFXGRSE6kkxpD/vnMhdbOdpcX2spfEos798p1D/fBjuSrHi5cvx+KlOFtpJ3JdKJEpl1Z6qZzwKyVOzR8q9bYSaSGdQ8p3pUxv5LUSP53SY6FTZZwSn07P4HkxNnKtHNAgwdF4XMOriy+18Xqtfr5PVem1NfPx6OKLygsQDU8nKLp/9KE26TZhPH2/dL6SqQfxjflK6J6p4IcsnLjTfgU/S2UyZdKNWEsDtq+V8ULCW1UU+N8ukVWklZIoX0iTiTwoE6k1Xt17kH9rU3p/SI7LUtN/p5RYeV++WSwKW2Xfff/q1eE1qK2Xh9ouMn0IYV6k9lZVoHkhTmymRHwUlSpt5SlwbHYT8L/GI3BOvNOgvTKyQJJRWelb6ZWYaOO8NClk6VicX87FhLhTmUIgwgkmoj2AWD0ir3H2WvkPdVFsfq1loXOtMkrOLyAqYRVBMGXYzdDK0ST/04AOfn+EB+peO4+m0dEVPyZIN8P3Ok+eBRqWMMothD5dJR3ZmJf2MdA1utoqOxTTi4sp/Gv1k4Zt1VFGxz5f1Yo5Rkuw4IZ/P4zDn4fxTmtlVcnNVW3cSue+a3PMA3k5mhhXABeoYYZKZXWq+vRN4JMXkwpjizqgKnxdGTGp0Lu5IO+MOxIP8HvKwv2qsnfCqDsxbK7EQVaNz5Mp5U48fz1xwlgvclubbA4+Q1pFa8Qb8dxNSTVaOyPx6Hw0AkIHRw9Pq5/4lss42d+74JzKQ/3I6tqFIu2UArw/eAv1+FlWYCuIdcmMiqKMByEdk05/HwsD5YvFPhotFuDrRiw3wm9KtQLTAOEq5+dC5wBuEh6lBowIRBgREpcWaE2rhqygWCYce6gIInp2zOqa4kQR3AmOmKhvZk1J8vsh18D+iQcoPngL0Yc83YZymfUKM9rQ5Rua8rjMvm9sJuvYKX1o8uB1BCObi4uTwrq6Uvuca5+Srk9cA+cDuz5bp6miZ5d9XrZUqAKGC+t5UjvYusioExzAuMs33cHAPbAzLjEw/bZAg9u+GI9gFHyu7K0GdJddwd7SII3T6VD8bmsYQziKbpTA8WhzoujwKBgfqsKiJDihskkCGc+qmbAV6cTqhtOSVXNfi0QbOk0li5cgh9NCPDS6RjzLwV8BHanNNYMqjVL6sW3WUiFZVNWVsNb3oHsCthE/9DfMjzhWl7AwIONAWnK30umKQrFUWyZSQt1WNsVp3ve3I5CtjvNfFoAjGcSSkBuFIl7VS9hXWrgKYrjJ5uQAVy5gh4NsdQzWMJJiQmhBCJAxF86KDeQ0lQac8eDSsskgmtqAj+XnpsYi4kA3aecUTBJu02Zwn5NZl3FwPaXGf6pLcBAheRiYAPIIJg3E71GIzQaROBpH4644kwnFJ6IuR+IYV4Yr+s2vI0L2XGq3k3Pma5z6dq9YP7vFU7dtVMxfZs0Utrwsi5XlYi8yJ5lzcKD9FBZAU2xgPla47MEW6JVoF6xYp0oa3IlhT74jydA0pahL7m50VsglrHXzkPtZOylQG0LoNIDjVLx4IbrnH5WBdRDqbdrg9764NblpIamFIGicDworsIdATa8MoYg5vhIEQEicI4E/ICJjwFmPeo5Fj5MDR26zgxDfjm4czLzYiIOUQbDFGluzsssapzn0HxynN0KHAb+jp7qB7DVVhPM9ZLFTntqjfXFDqsFqxatKP3+8OEECm6gg1gSGBiR5fbnTGFi4ltyoTmJVe3fpJTiVRSGXcMObRCFnFNgg0Ab2PuJB/9l+mkMNi/eQzwMYgjVdphprdxoWldBtTHs37SnZVw5sT7Jld9gaYT9s1r2IU7RoJw1hhCpsZt7L6Pz81SUv6CwiIfDpX0cT4pnNaA/4pPzKZo3Y89eXYcEPi2vI9mD3pQX3qFMU7a4/w7lPBHNeJOZ8o+vt/rj+cgzfAwUbFMhncBWgWuIVCG8ojXU7t7EYiMccboLW9Xl6dcU2TP8Dl9t87vc60Ox2vOtU36d43Wjd+pfNf9TonqnjR2fc9DdDxQ39l+FSsNZGiRVQU0NSB8UGoBR0982POHNMk/AI1q5UKd3dw0ebHZsew+kQ5fk0CbtLjrAN8A2cXkvY/cGiwtobmHnbIs8vu98FSDLdfUFy5xgHEFy2AqIR1ncU55Vds+StieJARaG8fZKzO6GEuZqPGAQUPZPx/hmQJW42oUq+8ptI/MLRmxfNOjHcf5ovOa0++gy1X/Zon0iUEA+3mmRbzRb/8OLfkdWtuhMyD2YR1vOTag+/kEEQ/w+F+G3lN8joo8XXSVScbfGj1zeW43gPRgbcj1/lJvTZ8Vg0H15OLJhS1XiczOJlgKkGHwRgSdPdzK2kw10FKOdxq+htkbRZwJogDd7M/hGWUVAPl9lE8OY0BKsLu4MqHpImjKIP478B01povQ==</source>
+  </file>
+  <package name="DI" full_name="DI"/>
+  <namespace name="DI" full_name="DI"/>
+  <deprecated count="0"/>
+</project>
