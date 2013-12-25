@@ -34,7 +34,7 @@ module.exports = function (grunt) {
 				base: 'docs',
 				message: 'Auto-commit via Travis [ci-skip]',
 				repo: 'https://' + process.env.GH_OAUTH_TOKEN + '@github.com/lord2800/di.php.git',
-				silent: true,
+				silent: false,
 				user: {
 					name: 'Travis CI',
 					email: 'lord2800@gmail.com'
