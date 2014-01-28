@@ -93,7 +93,8 @@ class Injector {
 			if(isset($this->classcache[$class])) {
 				throw new RuntimeException(sprintf('Duplicate dependency class %s', $class));
 			}
-			// don't add closures to the class cache--it's only for concrete instances (which means this won't trip up the isset above, either)
+			// don't add closures to the class cache--it's only for concrete instances (which means this won't trip up
+			// the isset above, either)
 			if($class !== 'Closure' && $class !== 'Generator') {
 				$this->classcache[$class] = $obj;
 			}
@@ -114,6 +115,25 @@ class Injector {
 			return $this->namecache[$name];
 		}
 		return null;
+	}
+
+	/**
+	  * Configure or replace an instance with an API-compatible instance
+	  * @param string $name The class or instance name to delegate
+	  * @param callable $closure A callable that will be invoked with the current instance
+	  */
+	public function delegate($name, callable $closure) {
+		$instance = $this->retrieve($name);
+		$fqcn = get_class($instance);
+		$instance = $closure();
+		if(!empty($instance)) {
+			// clear the class and name cache for the name so we can provide it back to the injector
+			unset($this->namecache[$name]);
+			unset($this->classcache[$fqcn]);
+			$this->provide($name, $instance);
+			// manually insert the delegated class into the class cache
+			$this->classcache[$fqcn] = $instance;
+		}
 	}
 
 	/**

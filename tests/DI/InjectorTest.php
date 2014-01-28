@@ -3,10 +3,12 @@
 require_once('namespaces.php');
 
 class Dependency {}
+class Delegate extends Dependency { }
 class Dependent { public $dep; public function __construct(Dependency $dep) { $this->dep = $dep; } }
 class Callback { function called() {} }
 class CallbackWithInvoke { public $called = false; function __invoke() { $this->called = true; } }
 class CallbackWithDeps { public $inst; function __invoke(Dependency $dep) { $this->inst->assertInstanceOf('Dependency', $dep); } }
+class CallbackWithDelegate { public $inst; function __invoke(Dependency $obj) { $this->inst->assertInstanceOf('Delegate', $obj); } }
 
 class InjectorTest extends \PHPUnit_Framework_TestCase {
 	private $injector, $dep, $dep2;
@@ -145,6 +147,16 @@ class InjectorTest extends \PHPUnit_Framework_TestCase {
 		$cb = new CallbackWithDeps();
 		$cb->inst = $this;
 		$fn = $this->injector->inject($cb);
+		$fn();
+	}
+
+	public function testDelegateShouldReplaceInstance() {
+		$injector = new \DI\Injector();
+		$injector->provide('del', new Dependency());
+		$injector->delegate('del', function () { return new Delegate(); });
+		$cb = new CallbackWithDelegate();
+		$cb->inst = $this;
+		$fn = $injector->inject($cb);
 		$fn();
 	}
 }
