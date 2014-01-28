@@ -58,6 +58,7 @@
 <i title="Methods" class="icon-custom icon-method"></i> Methods
                     <ul>
 <li class="method public "><a href="#method_create" title="create() :: Create a new instance of the specified class"><span class="description">Create a new instance of the specified class</span><pre>create()</pre></a></li>
+<li class="method public "><a href="#method_delegate" title="delegate() :: Configure or replace an instance with an API-compatible instance"><span class="description">Configure or replace an instance with an API-compatible instance</span><pre>delegate()</pre></a></li>
 <li class="method public "><a href="#method_inject" title="inject() :: Inject a function and return a closure that will invoke the injected function"><span class="description">Inject a function and return a closure that will invoke the injected function</span><pre>inject()</pre></a></li>
 <li class="method public "><a href="#method_instance" title="instance() :: Get an instance of the specified class"><span class="description">Get an instance of the specified class</span><pre>instance()</pre></a></li>
 <li class="method public "><a href="#method_provide" title="provide() :: Provide a dependency to the injector. You may make use of the dependency either by classname (of the object) or
@@ -113,6 +114,21 @@ by the provided name (in the case of a closure)</span><pre>provide()</pre></a></
 <h3>Returns</h3>
 <div class="subelement response">
 <code>mixed</code>The instance of the specified class</div>
+</div></div>
+</div>
+<a id="method_delegate"></a><div class="element clickable method public method_delegate" data-toggle="collapse" data-target=".method_delegate .collapse" title="public">
+<h2>Configure or replace an instance with an API-compatible instance</h2>
+<pre>delegate(string $name, callable $closure) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code><p>The class or instance name to delegate</p></div>
+<div class="subelement argument">
+<h4>$closure</h4>
+<code>callable</code><p>A callable that will be invoked with the current instance</p></div>
 </div></div>
 </div>
 <a id="method_inject"></a><div class="element clickable method public method_inject" data-toggle="collapse" data-target=".method_inject .collapse" title="public">
@@ -196,7 +212,7 @@ by the provided name (in the case of a closure)</h2>
             Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
             Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.2.0
 </a> and<br>
-            generated on 2013-12-25T23:14:05Z.<br></footer></div>
+            generated on 2014-01-28T19:44:36Z.<br></footer></div>
 </div>
 </body>
 </html>
