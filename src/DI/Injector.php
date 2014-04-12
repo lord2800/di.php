@@ -43,19 +43,16 @@ class Injector {
 	}
 
 	/** @internal */
-	private function internalInject(ReflectionFunctionAbstract $ref) {
+	private function resolve(ReflectionFunctionAbstract $ref) {
 		$args = [];
 		foreach($ref->getParameters() as $parameter) {
 			$dependency = null;
 
 			// try by typehint first, if that fails try by name
 			$cls = $parameter->getClass();
-			if($cls !== null) {
-				$name = $cls->getName();
-				if($name !== null) {
-					$dependency = $this->retrieve($name);
-				}
-			}
+			$dependency = null;
+
+			// TODO: walk the dependency list, see if any of the objects matches a class or interface of the required object
 
 			if($dependency === null) {
 				$dependency = $this->retrieve($parameter->getName());
@@ -146,15 +143,15 @@ class Injector {
 		if(is_array($closure)) {
 			$inst = $closure[0];
 			$ref = (new ReflectionClass($inst))->getMethod($closure[1]);
-			$args = $this->internalInject($ref);
+			$args = $this->resolve($ref);
 			return function () use($ref, $args, $inst) { return $ref->invokeArgs($inst, $args); };
 		} else if(!($closure instanceof \Closure)) {
 			$ref = (new ReflectionClass($closure))->getMethod('__invoke');
-			$args = $this->internalInject($ref);
+			$args = $this->resolve($ref);
 			return function () use($ref, $args, $closure) { return $ref->invokeArgs($closure, $args); };
 		} else {
 			$ref = new ReflectionFunction($closure);
-			$args = $this->internalInject($ref);
+			$args = $this->resolve($ref);
 			return function () use($ref, $args) { return $ref->invokeArgs($args); };
 		}
 		throw new RuntimeException('Unable to determine how to invoke callable');
@@ -193,7 +190,7 @@ class Injector {
 
 		if($ctor !== null) {
 			// if the class has a ctor, inject the dependencies it wants
-			$args = $this->internalInject($ctor);
+			$args = $this->resolve($ctor);
 			return $ref->newInstanceArgs($args);
 		}
 		return $ref->newInstance();
