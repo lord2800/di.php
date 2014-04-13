@@ -56,7 +56,7 @@ class Injector {
 			if($cls !== null) {
 				while($dependency == null) {
 					$name = $cls->getName();
-					if($this->classcache[$name] !== null) {
+					if(key_exists($name, $this->classcache)) {
 						$dependency = $this->classcache[$name];
 					} else {
 						$cls = $cls->getParentClass();
