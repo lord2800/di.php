@@ -53,14 +53,12 @@ class Injector {
 			$dependency = null;
 
 			// TODO: walk the dependency list, see if any of the objects matches a class or interface of the required object
-			if($cls !== null) {
-				while($dependency == null) {
-					$name = $cls->getName();
-					if(key_exists($name, $this->classcache)) {
-						$dependency = $this->classcache[$name];
-					} else {
-						$cls = $cls->getParentClass();
-					}
+			while($dependency == null && $cls instanceof ReflectionClass) {
+				$name = $cls->getName();
+				if(key_exists($name, $this->classcache)) {
+					$dependency = $this->classcache[$name];
+				} else {
+					$cls = $cls->getParentClass();
 				}
 			}
 
