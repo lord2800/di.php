@@ -18,7 +18,7 @@ use \RuntimeException,
  */
 class Injector {
 	/** @internal */
-	private $instances = [], $classcache = [], $namecache = [];
+	private $instances = [], $classcache = [], $namecache = [], $parent;
 
 	/** @internal */
 	private function getFullyQualifiedClassName($class, $namespaces) {
@@ -55,8 +55,18 @@ class Injector {
 			// TODO: walk the dependency list, see if any of the objects matches a class or interface of the required object
 			while($dependency == null && $cls instanceof ReflectionClass) {
 				$name = $cls->getName();
+				$interfaces = $cls->getInterfaces();
 				if(key_exists($name, $this->classcache)) {
 					$dependency = $this->classcache[$name];
+				} else if(count($interfaces)) {
+					foreach($interfaces as $interface) {
+						foreach($this->classcache as $class => $inst) {
+							$refl = new ReflectionClass($class);
+							if($class->implementsInterface($interface->getName())) {
+								$dependency = $inst;
+							}
+						}
+					}
 				} else {
 					$cls = $cls->getParentClass();
 				}
@@ -77,6 +87,13 @@ class Injector {
 		}
 		return $args;
 	}
+
+	/**
+	 * Create an injector to resolve and create instances of dependencies
+	 * @api
+	 * @param Injector $parent optional Parent injector instance
+	 */
+	public function __construct(Injector $parent = null) { $this->parent = $parent; }
 
 	/**
 	 * Provide a dependency to the injector. You may make use of the dependency either by classname (of the object) or
@@ -107,10 +124,10 @@ class Injector {
 	}
 
 	/**
-	  * Fetch a dependency provided to the injector.
-	  * @param string $name The name of the dependency to retrieve
-	  * @return mixed The dependency, or null if not found
-	  */
+	 * Fetch a dependency provided to the injector.
+	 * @param string $name The name of the dependency to retrieve
+	 * @return mixed The dependency, or null if not found
+	 */
 	public function retrieve($name) {
 		// the class cache is more robust, so check it first
 		if(isset($this->classcache[$name])) {
@@ -123,10 +140,10 @@ class Injector {
 	}
 
 	/**
-	  * Configure or replace an instance with an API-compatible instance
-	  * @param string $name The class or instance name to delegate
-	  * @param callable $closure A callable that will be invoked with the current instance
-	  */
+	 * Configure or replace an instance with an API-compatible instance
+	 * @param string $name The class or instance name to delegate
+	 * @param callable $closure A callable that will be invoked with the current instance
+	 */
 	public function delegate($name, callable $closure) {
 		$instance = $this->retrieve($name);
 		$fqcn = get_class($instance);
@@ -142,10 +159,10 @@ class Injector {
 	}
 
 	/**
-	  * Inject a function and return a closure that will invoke the injected function
-	  * @param callable $closure The closure to inject dependencies into
-	  * @return Closure A no-argument function that will invoke the closure with its' dependencies
-	  */
+	 * Inject a function and return a closure that will invoke the injected function
+	 * @param callable $closure The closure to inject dependencies into
+	 * @return Closure A no-argument function that will invoke the closure with its' dependencies
+	 */
 	public function inject(callable $closure) {
 		$ref = null;
 		if(is_array($closure)) {
