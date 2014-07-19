@@ -6,218 +6,146 @@
  */
 namespace DI;
 
-use \RuntimeException,
-	\ReflectionClass,
+use \ReflectionClass,
 	\ReflectionFunction,
-	\ReflectionFunctionAbstract;
+	\ReflectionFunctionAbstract,
+	\Interop\Container\ContainerInterface as Container,
+	\DI\ReferenceNotFoundException as RefNotFound,
+	\DI\NotResolvableException as NotResolvable;
 
 /**
  * The injector class deals with dependency management as well as object creation and function context invocation.
  * @api
- * @see http://lord2800.github.io/di.php/coverage/ Code coverage report
  */
-class Injector {
-	/** @internal */
-	private $instances = [], $classcache = [], $namecache = [], $parent;
+class Injector implements Container {
+	private $instances = [], $parent = null, $fnCache = [];
 
-	/** @internal */
-	private function getFullyQualifiedClassName($class, $namespaces) {
-		$fqn = $class;
-		$exists = class_exists($fqn);
-		if(!$exists) {
-			foreach($namespaces as $namespace) {
-				$fqn = $namespace . '\\' . $class;
-				if(class_exists($fqn)) {
-					$exists = true;
-					break;
-				}
-			}
-		}
-
-		if(!$exists) {
-			array_unshift($namespaces, $class);
-			$nslist = array_reduce($namespaces, function (&$r, $ns) { return $r . ', ' . $ns; }, '');
-			throw new RuntimeException(sprintf('Class %1$s not found, tried namespaces: %s', $nslist));
-		}
-		return $fqn;
+	public function __construct(Injector $parent = null) {
+		$this->parent = $parent;
 	}
 
-	/** @internal */
-	private function resolve(ReflectionFunctionAbstract $ref) {
+	/**
+	 * Retrieve an instance from the injector.
+	 * @param string $id Class identifier. This must be the fully qualified class name.
+	 * @return object The requested instance.
+	 * @throws Interop\Container\Exception\NotFoundException if the class identifier was not found.
+	 */
+	public function get($id) {
+		// if there's no parent and we don't have one, it's not found
+		if($this->parent === null && !array_key_exists($id, $this->instances)) {
+			throw new RefNotFound($id);
+		}
+
+		// return either ours or our parent's
+		return array_key_exists($id, $this->instances) ? $this->instances[$id] : $this->parent->get($id);
+	}
+
+	/**
+	 * Check for the existence of an instance from the injector.
+	 * @param string $id Class identifier. This must be the fully qualified class name.
+	 * @return bool True if the instance exists, otherwise false.
+	 */
+	public function has($id) {
+		if(array_key_exists($id, $this->instances)) {
+			return true;
+		}
+
+		return $this->parent !== null ? $this->parent->has($id) : false;
+	}
+
+	/**
+	 * Bind a specified class identifier to a specified instance in the injector.
+	 * @param string $id Class identifier. This must be the fully qualified class name.
+	 * @param object $instance The instance to bind to the specified class identifier.
+	 * @return object The requested instance.
+	 */
+	public function bind($id, $instance) {
+		$this->instances[$id] = $instance;
+	}
+
+	/**
+	 * Annotate a function so that it is dependency injected.
+	 * @param callable $callable The function to annotate.
+	 * @return A no-argument function that invokes the specified function with all of its' parameters dependency injected.
+	 */
+	public function annotate(callable $callable) {
+		$fn = null;
+		$invoke = function () {};
+
+		// TODO can this be *any* cleaner?
+		if(is_array($callable)) {
+			// support shorthand array callable form
+			if(count($callable) !== 2) {
+				throw new NotResolvable($callable);
+			}
+			$cls = new ReflectionClass($callable[0]);
+			$fn = $cls->getMethod($callable[1]);
+			$invoke = function ($args) use($fn, $callable) {
+				return function () use($fn, $callable, $args) {
+					$fn->invokeArgs($callable[0], $args);
+				};
+			};
+		} else if(!($callable instanceof \Closure)) {
+			// support magic __invoke method form
+			$cls = new ReflectionClass($callable);
+			$fn = $cls->getMethod('__invoke');
+			$invoke = function ($args) use($fn, $callable) {
+				return function () use($fn, $callable, $args) {
+					$fn->invokeArgs($callable, $args);
+				};
+			};
+		} else {
+			// support all other callables
+			$fn = new ReflectionFunction($callable);
+			$invoke = function ($args) use($fn) {
+				return function () use($fn, $args) {
+					$fn->invokeArgs($args);
+				};
+			};
+		}
+
+		$cacheId = sha1($fn->__toString());
+		if(array_key_exists($cacheId, $this->fnCache)) {
+			return $this->fnCache[$cacheId];
+		}
+
+		$args = $this->getArgs($fn);
+		$annotated = $invoke($args);
+		$this->fnCache[$cacheId] = $annotated;
+		return $annotated;
+	}
+
+	/**
+	 * Create an instance of a function with its' constructor dependency injected.
+	 * @param string $id Class identifier. This must be the fully qualified class name.
+	 * @return object The instance of your class, dependency injected via its' constructor.
+	 */
+	public function instantiate($id) {
+		// if we already have one, return it
+		if($this->has($id)) {
+			return $this->get($id);
+		}
+
+		// make a new one
+		$cls = new ReflectionClass($id);
+		$ctor = $cls->getConstructor();
+		// shortcut: if the class doesn't have a declared constructor, we can just create an instance of it with the no-arg ctor
+		if($ctor === null) {
+			$this->instances[$id] = $cls->newInstance();
+			return $this->instances[$id];
+		}
+
+		$args = $this->getArgs($ctor);
+		$annotated = function () use($cls, $args) { return $cls->newInstanceArgs($args); };
+		$this->instances[$id] = $annotated();
+		return $this->instances[$id];
+	}
+
+	private function getArgs(ReflectionFunctionAbstract $fn) {
 		$args = [];
-		foreach($ref->getParameters() as $parameter) {
-			$dependency = null;
-
-			// try by typehint first, if that fails try by name
-			$cls = $parameter->getClass();
-			$dependency = null;
-
-			// TODO: walk the dependency list, see if any of the objects matches a class or interface of the required object
-			while($dependency == null && $cls instanceof ReflectionClass) {
-				$name = $cls->getName();
-				$interfaces = $cls->getInterfaces();
-				if(key_exists($name, $this->classcache)) {
-					$dependency = $this->classcache[$name];
-				} else if(count($interfaces)) {
-					foreach($interfaces as $interface) {
-						foreach($this->classcache as $class => $inst) {
-							$refl = new ReflectionClass($class);
-							if($class->implementsInterface($interface->getName())) {
-								$dependency = $inst;
-							}
-						}
-					}
-				} else {
-					$cls = $cls->getParentClass();
-				}
-			}
-
-			if($dependency === null) {
-				$dependency = $this->retrieve($parameter->getName());
-			}
-
-			if($dependency !== null) {
-				if($dependency instanceof \Closure) {
-					$dependency = $dependency();
-				}
-				$args[$parameter->getPosition()] = $dependency;
-			} else {
-				throw new RuntimeException(sprintf('Could not satisfy dependency %s', $parameter->getName()));
-			}
+		foreach($fn->getParameters() as $param) {
+			$args[] = $this->instantiate($param->getClass()->getName());
 		}
 		return $args;
-	}
-
-	/**
-	 * Create an injector to resolve and create instances of dependencies
-	 * @api
-	 * @param Injector $parent optional Parent injector instance
-	 */
-	public function __construct(Injector $parent = null) { $this->parent = $parent; }
-
-	/**
-	 * Provide a dependency to the injector. You may make use of the dependency either by classname (of the object) or
-	 * by the provided name (in the case of a closure)
-	 * @api
-	 * @param string $name The name of the dependency being provided
-	 * @param mixed $obj The actual object backing the dependency (which may be a closure)
-	 * @throws RuntimeException If the provided dependency name or class already exists
-	 */
-	public function provide($name, $obj) {
-		// store dependencies by class and by name, so you can match by either the typehint or the parameter name
-		if(isset($this->namecache[$name])) {
-			throw new RuntimeException(sprintf('Duplicate dependency name %s', $name));
-		}
-		$this->namecache[$name] = $obj;
-
-		if(is_object($obj)) {
-			$class = get_class($obj);
-			if(isset($this->classcache[$class])) {
-				throw new RuntimeException(sprintf('Duplicate dependency class %s', $class));
-			}
-			// don't add closures to the class cache--it's only for concrete instances (which means this won't trip up
-			// the isset above, either)
-			if($class !== 'Closure' && $class !== 'Generator') {
-				$this->classcache[$class] = $obj;
-			}
-		}
-	}
-
-	/**
-	 * Fetch a dependency provided to the injector.
-	 * @param string $name The name of the dependency to retrieve
-	 * @return mixed The dependency, or null if not found
-	 */
-	public function retrieve($name) {
-		// the class cache is more robust, so check it first
-		if(isset($this->classcache[$name])) {
-			return $this->classcache[$name];
-		}
-		if(isset($this->namecache[$name])) {
-			return $this->namecache[$name];
-		}
-		return null;
-	}
-
-	/**
-	 * Configure or replace an instance with an API-compatible instance
-	 * @param string $name The class or instance name to delegate
-	 * @param callable $closure A callable that will be invoked with the current instance
-	 */
-	public function delegate($name, callable $closure) {
-		$instance = $this->retrieve($name);
-		$fqcn = get_class($instance);
-		$instance = $closure();
-		if(!empty($instance)) {
-			// clear the class and name cache for the name so we can provide it back to the injector
-			unset($this->namecache[$name]);
-			unset($this->classcache[$fqcn]);
-			$this->provide($name, $instance);
-			// manually insert the delegated class into the class cache
-			$this->classcache[$fqcn] = $instance;
-		}
-	}
-
-	/**
-	 * Inject a function and return a closure that will invoke the injected function
-	 * @param callable $closure The closure to inject dependencies into
-	 * @return Closure A no-argument function that will invoke the closure with its' dependencies
-	 */
-	public function inject(callable $closure) {
-		$ref = null;
-		if(is_array($closure)) {
-			$inst = $closure[0];
-			$ref = (new ReflectionClass($inst))->getMethod($closure[1]);
-			$args = $this->resolve($ref);
-			return function () use($ref, $args, $inst) { return $ref->invokeArgs($inst, $args); };
-		} else if(!($closure instanceof \Closure)) {
-			$ref = (new ReflectionClass($closure))->getMethod('__invoke');
-			$args = $this->resolve($ref);
-			return function () use($ref, $args, $closure) { return $ref->invokeArgs($closure, $args); };
-		} else {
-			$ref = new ReflectionFunction($closure);
-			$args = $this->resolve($ref);
-			return function () use($ref, $args) { return $ref->invokeArgs($args); };
-		}
-		throw new RuntimeException('Unable to determine how to invoke callable');
-	}
-
-	/**
-	 * Get an instance of the specified class
-	 * @param string $class The name of the class (either full or partial) to look up
-	 * @param string[] $namespaces The list of namespaces to try and retrieve the class from
-	 * @return mixed The singleton instance of the specified class
-	 */
-	public function instance($class, array $namespaces = []) {
-		$class = $this->getFullyQualifiedClassName($class, $namespaces);
-		if(!isset($this->instances[$class])) {
-			$instance = $this->create($class, $namespaces);
-			$this->instances[$class] = $instance;
-		} else {
-			$instance = $this->instances[$class];
-		}
-		return $instance;
-	}
-
-	/**
-	 * Create a new instance of the specified class
-	 * @see get
-	 * @param string $class The name of the class (either full or partial) to look up
-	 * @param string[] $namespaces The list of namespaces to try and retrieve the class from
-	 * @return mixed The instance of the specified class
-	 */
-	public function create($class, array $namespaces = []) {
-		$instance = null;
-		$fqn = $this->getFullyQualifiedClassName($class, $namespaces);
-
-		$ref = new ReflectionClass($fqn);
-		$ctor = $ref->getConstructor();
-
-		if($ctor !== null) {
-			// if the class has a ctor, inject the dependencies it wants
-			$args = $this->resolve($ctor);
-			return $ref->newInstanceArgs($args);
-		}
-		return $ref->newInstance();
 	}
 }
