@@ -30,7 +30,7 @@ class F {
 
 class InjectorTest extends \PHPUnit_Framework_TestCase {
 	public function testThrowsOnUnknownDependency() {
-		$this->setExpectedException('\Interop\Container\Exception\NotFoundException');
+		$this->setExpectedException('\DI\ReferenceNotFoundException');
 		$injector = new Injector();
 		$injector->get('\\UnknownClass');
 	}

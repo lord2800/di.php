@@ -75,9 +75,7 @@ class Injector implements Container {
 		// TODO can this be *any* cleaner?
 		if(is_array($callable)) {
 			// support shorthand array callable form
-			if(count($callable) !== 2) {
-				throw new NotResolvable($callable);
-			}
+			// callable arrays will always have 2 elements--otherwise they don't pass the typehint
 			$cls = new ReflectionClass($callable[0]);
 			$fn = $cls->getMethod($callable[1]);
 			$invoke = function ($args) use($fn, $callable) {
