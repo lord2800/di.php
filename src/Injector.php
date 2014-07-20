@@ -38,7 +38,13 @@ class Injector implements Container {
 	public function get($id) {
 		// if there's no parent and we don't have one, it's not found
 		if($this->parent === null && !array_key_exists($id, $this->instances)) {
-			throw new RefNotFound($id);
+			// try to make it
+			try {
+				return $this->instantiate($id);
+			} catch(\Exception $e) {
+				// throw RefNotFound if we couldn't build one
+				throw new RefNotFound($id);
+			}
 		}
 
 		// return either ours or our parent's
@@ -119,17 +125,12 @@ class Injector implements Container {
 	}
 
 	/**
-	 * Create an instance of a function with its' constructor dependency injected.
+	 * Create an instance of a class with its' constructor dependency injected. Always creates a new instance.
+	 * Use {@link \DI\Injector::get() Injector->get()} if you want to retrieve the same instance each time.
 	 * @param string $id Class identifier. This must be the fully qualified class name.
 	 * @return object The instance of your class, dependency injected via its' constructor.
 	 */
 	public function instantiate($id) {
-		// if we already have one, return it
-		if($this->has($id)) {
-			return $this->get($id);
-		}
-
-		// make a new one
 		$cls = new ReflectionClass($id);
 		if(!$cls->isInstantiable()) {
 			throw new DependencyException($id . ' is not instantiable!');
@@ -151,7 +152,12 @@ class Injector implements Container {
 	private function getArgs(ReflectionFunctionAbstract $fn) {
 		$args = [];
 		foreach($fn->getParameters() as $param) {
-			$args[] = $this->instantiate($param->getClass()->getName());
+			$name = $param->getClass()->getName();
+			if(!$this->has($name)) {
+				$args[] = $this->instantiate($param->getClass()->getName());
+			} else {
+				$args[] = $this->get($name);
+			}
 		}
 		return $args;
 	}

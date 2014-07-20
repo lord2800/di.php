@@ -4,6 +4,23 @@ namespace DI\Test;
 use DI\Injector;
 
 class InjectorTest extends \PHPUnit_Framework_TestCase {
+	public function testDependencyResolutionSpeed() {
+		$injector = new Injector();
+
+		$start = microtime(true);
+		$a = $injector->instantiate(A::class);
+		$end = microtime(true);
+		$simpleSpeed = ($end - $start) * 1000000;
+
+
+		$start = microtime(true);
+		$d = $injector->instantiate(D::class);
+		$end = microtime(true);
+		$complexSpeed = ($end - $start) * 1000000;
+
+		$this->markTestSkipped('Simple injection: ' . $simpleSpeed . ', Complex injection: ' . $complexSpeed);
+	}
+
 	public function testThrowsOnUnknownDependency() {
 		$this->setExpectedException('\DI\ReferenceNotFoundException');
 		$injector = new Injector();
@@ -56,57 +73,49 @@ class InjectorTest extends \PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf(A::class, $d->c->a);
 	}
 
-	public function testDependencyResolutionSpeed() {
-		$injector = new Injector();
-
-		$start = microtime(true);
-		$a = $injector->instantiate(A::class);
-		$end = microtime(true);
-		$simpleSpeed = ($end - $start) * 1000000;
-
-
-		$start = microtime(true);
-		$d = $injector->instantiate(D::class);
-		$end = microtime(true);
-		$complexSpeed = ($end - $start) * 1000000;
-
-		$this->markTestSkipped('Simple injection: ' . $simpleSpeed . ', Complex injection: ' . $complexSpeed);
-	}
-
 	public function testRetrievesDependenciesFromParents() {
 		$parent = new Injector();
 		$parent->bind(A::class, new B());
 		$child = new Injector($parent);
-		$a = $child->instantiate(A::class);
+
+		$a = $child->get(A::class);
+
 		$this->assertInstanceOf(B::class, $a);
 	}
 
 	public function testOverridesDependenciesFromParents() {
 		$parent = new Injector();
 		$parent->bind(A::class, new A());
+
 		$child = new Injector($parent);
 		$child->bind(A::class, new B());
-		$a = $child->instantiate(A::class);
+
+		$a = $child->get(A::class);
 		$this->assertInstanceOf(B::class, $a);
 	}
 
 	public function testRetrievesInstancesFromCache() {
 		$injector = new Injector();
-		$a = $injector->instantiate(A::class);
-		$aprime = $injector->instantiate(A::class);
-		$this->assertEquals($a, $aprime);
+
+		$a = $injector->get(A::class);
+		$aprime = $injector->get(A::class);
+
+		$this->assertSame($a, $aprime);
 	}
 
 	public function testRetrievesFunctionsFromCache() {
 		$injector = new Injector();
 		$phpunit = $this;
 		$fn = function (A $a) use($phpunit) {};
+
 		$a = $injector->annotate($fn);
 		$aprime = $injector->annotate($fn);
-		$this->assertEquals($a, $aprime);
+
+		$this->assertSame($a, $aprime);
 	}
 
 	public function testResolvesFromAnInterface() {
+		$this->markTestIncomplete('Resolving an unknown subclass from an interface is impossible!');
 		$injector = new Injector();
 		$phpunit = $this;
 		$fn = $injector->annotate(function (G $g) use($phpunit) { $phpunit->assertInstanceOf(I::class, $g); });
@@ -114,6 +123,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testResolvesFromABaseClass() {
+		$this->markTestIncomplete('Resolving an unknown subclass from a base class is impossible!');
 		$injector = new Injector();
 		$phpunit = $this;
 		$fn = $injector->annotate(function (H $h) use($phpunit) { $phpunit->assertInstanceOf(J::class, $h); });
