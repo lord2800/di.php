@@ -113,6 +113,20 @@ class InjectorTest extends \PHPUnit_Framework_TestCase {
 		$aprime = $injector->annotate($fn);
 		$this->assertEquals($a, $aprime);
 	}
+
+	public function testResolvesFromAnInterface() {
+		$injector = new Injector();
+		$phpunit = $this;
+		$fn = $injector->annotate(function (G $g) use($phpunit) { $phpunit->assertInstanceOf(I::class, $g); });
+		$fn();
+	}
+
+	public function testResolvesFromABaseClass() {
+		$injector = new Injector();
+		$phpunit = $this;
+		$fn = $injector->annotate(function (H $h) use($phpunit) { $phpunit->assertInstanceOf(J::class, $h); });
+		$fn();
+	}
 }
 
 class A {}

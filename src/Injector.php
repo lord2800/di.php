@@ -10,7 +10,7 @@ use \ReflectionClass,
 	\ReflectionFunctionAbstract,
 	\Interop\Container\ContainerInterface as Container,
 	\DI\ReferenceNotFoundException as RefNotFound,
-	\DI\NotResolvableException as NotResolvable;
+	\DI\DependencyException;
 
 /**
  * The injector class deals with dependency management as well as object creation and function context invocation.
@@ -131,6 +131,9 @@ class Injector implements Container {
 
 		// make a new one
 		$cls = new ReflectionClass($id);
+		if(!$cls->isInstantiable()) {
+			throw new DependencyException($id . ' is not instantiable!');
+		}
 		$ctor = $cls->getConstructor();
 		// shortcut: if the class doesn't have a declared constructor, we can just create an instance of it with the no-arg ctor
 		if($ctor === null) {
