@@ -1,7 +1,6 @@
 <?php
 /**
  * This file describes the Injector class
- * @package DI
  * @license MIT
  */
 namespace DI;
@@ -18,8 +17,14 @@ use \ReflectionClass,
  * @api
  */
 class Injector implements Container {
+	/** @internal */
 	private $instances = [], $parent = null, $fnCache = [];
 
+	/**
+	 * Create an instance of an injector with an optional parent.
+	 * Provide a parent injector when you wish to optionally override some dependencies but not others
+	 * @param \DI\Injector $parent The parent injector to optionally retrieve dependencies from
+	 */
 	public function __construct(Injector $parent = null) {
 		$this->parent = $parent;
 	}
@@ -139,6 +144,7 @@ class Injector implements Container {
 		return $this->instances[$id];
 	}
 
+	/** @internal */
 	private function getArgs(ReflectionFunctionAbstract $fn) {
 		$args = [];
 		foreach($fn->getParameters() as $param) {
