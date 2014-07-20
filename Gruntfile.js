@@ -27,7 +27,7 @@ module.exports = function (grunt) {
 			}
 		},
 		process: {
-			'vendor/bin/phpdoc.php': {}
+			'vendor/bin/phpdoc': {}
 		},
 		'gh-pages': {
 			options: {
@@ -51,7 +51,7 @@ module.exports = function (grunt) {
 	});
 
 	grunt.registerTask('precommit', ['parallelize:phplint', 'phpcs', 'phpunit']);
-	grunt.registerTask('phpdoc', ['process:vendor/bin/phpdoc.php']);
+	grunt.registerTask('phpdoc', ['process:vendor/bin/phpdoc']);
 	grunt.registerTask('test', ['phplint', 'phpcs', /*'php_analyzer',*/ 'phpunit']);
 	grunt.registerTask('docs', ['phpdoc', 'gh-pages']);
 	grunt.registerTask('default', ['test']);
