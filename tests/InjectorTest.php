@@ -3,31 +3,6 @@ namespace DI\Test;
 
 use DI\Injector;
 
-class A {}
-class B {public function __construct() {}}
-
-class C {
-	public $a, $b;
-	public function __construct(A $a, B $b) {
-		$this->a = $a;
-		$this->b = $b;
-	}
-}
-class D {
-	public $c;
-	public function __construct(C $c) { $this->c = $c; }
-}
-
-class E {
-	public $a;
-	public function e(A $a) { $this->a = $a; }
-}
-
-class F {
-	public $a;
-	public function __invoke(A $a) { $this->a = $a; }
-}
-
 class InjectorTest extends \PHPUnit_Framework_TestCase {
 	public function testThrowsOnUnknownDependency() {
 		$this->setExpectedException('\DI\ReferenceNotFoundException');
@@ -81,19 +56,18 @@ class InjectorTest extends \PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf(A::class, $d->c->a);
 	}
 
-	// would be nice to assert this fact, but it's flaky
-	protected function ResolvesSimpleDependenciesInUnder50Microseconds() {
+	public function testResolvesSimpleDependenciesInUnder50Microseconds() {
 		$injector = new Injector();
 		$start = microtime(true);
 		$a = $injector->instantiate(A::class);
 		$end = microtime(true);
 		$this->assertInstanceOf(A::class, $a);
 		$elapsedMicroseconds = ($end - $start) * 1000000;
-		$this->assertLessThan(50, $elapsedMicroseconds);
+
+		$this->markTestSkipped('Simple injection: ' . $elapsedMicroseconds);
 	}
 
-	// would be nice to assert this fact, but it's flaky
-	protected function ResolvesComplexDependenciesInUnder500Microseconds() {
+	public function testResolvesComplexDependenciesInUnder500Microseconds() {
 		$injector = new Injector();
 		$start = microtime(true);
 		$d = $injector->instantiate(D::class);
@@ -103,7 +77,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf(B::class, $d->c->b);
 		$this->assertInstanceOf(A::class, $d->c->a);
 		$elapsedMicroseconds = ($end - $start) * 1000000;
-		$this->assertLessThan(500, $elapsedMicroseconds);
+
+		$this->markTestSkipped('Complex injection: ' . $elapsedMicroseconds);
 	}
 
 	public function testRetrievesDependenciesFromParents() {
@@ -133,11 +108,44 @@ class InjectorTest extends \PHPUnit_Framework_TestCase {
 	public function testRetrievesFunctionsFromCache() {
 		$injector = new Injector();
 		$phpunit = $this;
-		$fn = function (A $a) use($phpunit) { $phpunit->assertInstanceOf(A::class, $a); };
+		$fn = function (A $a) use($phpunit) {};
 		$a = $injector->annotate($fn);
 		$aprime = $injector->annotate($fn);
 		$this->assertEquals($a, $aprime);
-		$a();
-		$aprime();
 	}
 }
+
+class A {}
+
+class B {public function __construct() {}}
+
+class C {
+	public $a, $b;
+	public function __construct(A $a, B $b) {
+		$this->a = $a;
+		$this->b = $b;
+	}
+}
+
+class D {
+	public $c;
+	public function __construct(C $c) { $this->c = $c; }
+}
+
+class E {
+	public $a;
+	public function e(A $a) { $this->a = $a; }
+}
+
+class F {
+	public $a;
+	public function __invoke(A $a) { $this->a = $a; }
+}
+
+interface G {}
+
+class H {}
+
+class I implements G {}
+
+class J extends H {}

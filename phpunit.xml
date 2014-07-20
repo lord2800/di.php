@@ -3,7 +3,7 @@
    bootstrap="vendor/autoload.php"
    colors="true"
    strict="true"
-   verbose="false"
+   verbose="true"
    beStrictAboutTestsThatDoNotTestAnything="true">
 	<testsuites>
 		<testsuite name="Dependency Injector Tests">
