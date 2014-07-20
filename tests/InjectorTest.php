@@ -56,29 +56,21 @@ class InjectorTest extends \PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf(A::class, $d->c->a);
 	}
 
-	public function testResolvesSimpleDependenciesInUnder50Microseconds() {
+	public function testDependencyResolutionSpeed() {
 		$injector = new Injector();
+
 		$start = microtime(true);
 		$a = $injector->instantiate(A::class);
 		$end = microtime(true);
-		$this->assertInstanceOf(A::class, $a);
-		$elapsedMicroseconds = ($end - $start) * 1000000;
+		$simpleSpeed = ($end - $start) * 1000000;
 
-		$this->markTestSkipped('Simple injection: ' . $elapsedMicroseconds);
-	}
 
-	public function testResolvesComplexDependenciesInUnder500Microseconds() {
-		$injector = new Injector();
 		$start = microtime(true);
 		$d = $injector->instantiate(D::class);
 		$end = microtime(true);
-		$this->assertInstanceOf(D::class, $d);
-		$this->assertInstanceOf(C::class, $d->c);
-		$this->assertInstanceOf(B::class, $d->c->b);
-		$this->assertInstanceOf(A::class, $d->c->a);
-		$elapsedMicroseconds = ($end - $start) * 1000000;
+		$complexSpeed = ($end - $start) * 1000000;
 
-		$this->markTestSkipped('Complex injection: ' . $elapsedMicroseconds);
+		$this->markTestSkipped('Simple injection: ' . $simpleSpeed . ', Complex injection: ' . $complexSpeed);
 	}
 
 	public function testRetrievesDependenciesFromParents() {
