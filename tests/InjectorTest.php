@@ -64,6 +64,12 @@ class InjectorTest extends \PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf(A::class, $f->a);
 	}
 
+	public function testReturnsTheResultOfAnInvocation() {
+		$injector = new Injector();
+		$fn = $injector->annotate(function () { return 42; });
+		$this->assertSame(42, $fn());
+	}
+
 	public function testCreatesInstancesOfClasses() {
 		$injector = new Injector();
 		$d = $injector->instantiate(D::class);

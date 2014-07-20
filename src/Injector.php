@@ -91,7 +91,7 @@ class Injector implements Container {
 			$fn = $cls->getMethod($callable[1]);
 			$invoke = function ($args) use($fn, $callable) {
 				return function () use($fn, $callable, $args) {
-					$fn->invokeArgs($callable[0], $args);
+					return $fn->invokeArgs($callable[0], $args);
 				};
 			};
 		} else if(!($callable instanceof \Closure)) {
@@ -100,7 +100,7 @@ class Injector implements Container {
 			$fn = $cls->getMethod('__invoke');
 			$invoke = function ($args) use($fn, $callable) {
 				return function () use($fn, $callable, $args) {
-					$fn->invokeArgs($callable, $args);
+					return $fn->invokeArgs($callable, $args);
 				};
 			};
 		} else {
@@ -108,7 +108,7 @@ class Injector implements Container {
 			$fn = new ReflectionFunction($callable);
 			$invoke = function ($args) use($fn) {
 				return function () use($fn, $args) {
-					$fn->invokeArgs($args);
+					return $fn->invokeArgs($args);
 				};
 			};
 		}
