@@ -6,19 +6,25 @@ use DI\Injector;
 class InjectorTest extends \PHPUnit_Framework_TestCase {
 	public function testDependencyResolutionSpeed() {
 		$injector = new Injector();
+		$simpleSpeed = 0;
+		$complexSpeed = 0;
+		$rounds = 10000;
 
-		$start = microtime(true);
-		$a = $injector->instantiate(A::class);
-		$end = microtime(true);
-		$simpleSpeed = ($end - $start) * 1000000;
+		for($i = 0; $i < $rounds; $i++) {
+			$start = microtime(true);
+			$a = $injector->instantiate(A::class);
+			$end = microtime(true);
+			$simpleSpeed += ($end - $start) * 1000000;
+		}
 
+		for($i = 0; $i < $rounds; $i++) {
+			$start = microtime(true);
+			$d = $injector->instantiate(D::class);
+			$end = microtime(true);
+			$complexSpeed += ($end - $start) * 1000000;
+		}
 
-		$start = microtime(true);
-		$d = $injector->instantiate(D::class);
-		$end = microtime(true);
-		$complexSpeed = ($end - $start) * 1000000;
-
-		$this->markTestSkipped('Simple injection: ' . $simpleSpeed . ', Complex injection: ' . $complexSpeed);
+		$this->markTestSkipped('Simple injection: ' . ($simpleSpeed / $rounds) . 'ms, Complex injection: ' . ($complexSpeed / $rounds) . 'ms');
 	}
 
 	public function testThrowsOnUnknownDependency() {
