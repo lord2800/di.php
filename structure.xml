@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project title="API Documentation" version="2.7.0">
+  <partials/>
+  <file path="Injector.php" generated-path="Injector.html" hash="8159dba42add4352aa7b257d15b2ae9a" package="Default">
+    <docblock line="0">
+      <description>This file describes the Injector class</description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+      <tag name="license" line="0" description="MIT" link="http://opensource.org/licenses/MIT"/>
+    </docblock>
+    <namespace-alias name="ReflectionClass">\ReflectionClass</namespace-alias>
+    <namespace-alias name="ReflectionFunction">\ReflectionFunction</namespace-alias>
+    <namespace-alias name="ReflectionFunctionAbstract">\ReflectionFunctionAbstract</namespace-alias>
+    <namespace-alias name="Container">\Interop\Container\ContainerInterface</namespace-alias>
+    <namespace-alias name="RefNotFound">\DI\ReferenceNotFoundException</namespace-alias>
+    <namespace-alias name="DependencyException">\DI\DependencyException</namespace-alias>
+    <class final="false" abstract="false" namespace="DI" line="19" package="Default">
+      <extends/>
+      <implements>\Interop\Container\ContainerInterface</implements>
+      <name>Injector</name>
+      <full_name>\DI\Injector</full_name>
+      <docblock line="19">
+        <description>The injector class deals with dependency management as well as object creation and function context invocation.</description>
+        <long-description></long-description>
+        <tag name="api" line="19" description=""/>
+        <tag name="package" line="19" description="Default"/>
+      </docblock>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="DI" line="28" package="Default">
+        <name>__construct</name>
+        <full_name>\DI\Injector::__construct()</full_name>
+        <docblock line="28">
+          <description>Create an instance of an injector with an optional parent.</description>
+          <long-description>Provide a parent injector when you wish to optionally override some dependencies but not others</long-description>
+          <tag name="param" line="28" description="&lt;p&gt;The parent injector to optionally retrieve dependencies from&lt;/p&gt;" type="\DI\Injector" variable="$parent">
+            <type>\DI\Injector</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$parent</name>
+          <default>null</default>
+          <type>\DI\Injector</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="DI" line="38" package="Default">
+        <name>get</name>
+        <full_name>\DI\Injector::get()</full_name>
+        <docblock line="38">
+          <description>Retrieve an instance from the injector.</description>
+          <long-description></long-description>
+          <tag name="param" line="38" description="&lt;p&gt;Class identifier. This must be the fully qualified class name.&lt;/p&gt;" type="string" variable="$id">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="38" description="The requested instance." type="object">
+            <type>object</type>
+          </tag>
+          <tag name="throws" line="38" description="if the class identifier was not found." type="\DI\Interop\Container\Exception\NotFoundException">
+            <type>\DI\Interop\Container\Exception\NotFoundException</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$id</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="DI" line="59" package="Default">
+        <name>has</name>
+        <full_name>\DI\Injector::has()</full_name>
+        <docblock line="59">
+          <description>Check for the existence of an instance from the injector.</description>
+          <long-description></long-description>
+          <tag name="param" line="59" description="&lt;p&gt;Class identifier. This must be the fully qualified class name.&lt;/p&gt;" type="string" variable="$id">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="59" description="True if the instance exists, otherwise false." type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$id</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="DI" line="73" package="Default">
+        <name>bind</name>
+        <full_name>\DI\Injector::bind()</full_name>
+        <docblock line="73">
+          <description>Bind a specified class identifier to a specified instance in the injector.</description>
+          <long-description></long-description>
+          <tag name="param" line="73" description="&lt;p&gt;Class identifier. This must be the fully qualified class name.&lt;/p&gt;" type="string" variable="$id">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="73" description="&lt;p&gt;The instance to bind to the specified class identifier.&lt;/p&gt;" type="object" variable="$instance">
+            <type>object</type>
+          </tag>
+          <tag name="return" line="73" description="The requested instance." type="object">
+            <type>object</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$id</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$instance</name>
+          <default></default>
+          <type>object</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="DI" line="82" package="Default">
+        <name>annotate</name>
+        <full_name>\DI\Injector::annotate()</full_name>
+        <docblock line="82">
+          <description>Annotate a function so that it is dependency injected.</description>
+          <long-description></long-description>
+          <tag name="param" line="82" description="&lt;p&gt;The function to annotate.&lt;/p&gt;" type="callable" variable="$callable">
+            <type>callable</type>
+          </tag>
+          <tag name="return" line="82" description="no-argument function that invokes the specified function with all of its' parameters dependency injected." type="\DI\A">
+            <type>\DI\A</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$callable</name>
+          <default></default>
+          <type>callable</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="DI" line="133" package="Default">
+        <name>instantiate</name>
+        <full_name>\DI\Injector::instantiate()</full_name>
+        <docblock line="133">
+          <description>Create an instance of a class with its' constructor dependency injected. Always creates a new instance.</description>
+          <long-description>Use [Injector-&gt;get()](/classes/DI.Injector.html#method_get) if you want to retrieve the same instance each time.</long-description>
+          <tag name="param" line="133" description="&lt;p&gt;Class identifier. This must be the fully qualified class name.&lt;/p&gt;" type="string" variable="$id">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="133" description="The instance of your class, dependency injected via its' constructor." type="object">
+            <type>object</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$id</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+    </class>
+    <markers/>
+    <source>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</source>
+  </file>
+  <file path="ReferenceNotFoundException.php" generated-path="ReferenceNotFoundException.html" hash="c0c167369c25a868e06f04725185c688" package="Default">
+    <docblock line="0">
+      <description>This file describes the ReferenceNotFoundException class</description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+      <tag name="license" line="0" description="MIT" link="http://opensource.org/licenses/MIT"/>
+    </docblock>
+    <class final="false" abstract="false" namespace="DI" line="12" package="Default">
+      <extends>\RuntimeException</extends>
+      <implements>\Interop\Container\Exception\NotFoundException</implements>
+      <name>ReferenceNotFoundException</name>
+      <full_name>\DI\ReferenceNotFoundException</full_name>
+      <docblock line="12">
+        <description>The ReferenceNotFoundException class represents when the {@link \DI\Injector Injector} can't find your specified reference.</description>
+        <long-description></long-description>
+        <tag name="api" line="12" description=""/>
+        <tag name="package" line="12" description="Default"/>
+      </docblock>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="DI" line="17" package="Default">
+        <name>__construct</name>
+        <full_name>\DI\ReferenceNotFoundException::__construct()</full_name>
+        <docblock line="17">
+          <description>Create an instance of the ReferenceNotFoundException class.</description>
+          <long-description></long-description>
+          <tag name="param" line="17" description="&lt;p&gt;The fully qualified class name that couldn't be found&lt;/p&gt;" type="string" variable="$id">
+            <type>string</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$id</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+    </class>
+    <source>eJyNkU1LAzEQhs/NrxiKYlukvVfBQquwBz2UHhdKmp11o9lJzAe2lP53Z1NrBUG9JSTzvM/M3N65xonJaCRgBKtGB6i1QagwKK83GCA2CEus0SMpfLLxwSaq7rcKXdSWQBkZQlc7M1ohBYTHYsX3iSDZYnBSISyKG3GO+BsHHp3HgBQDvDdI2WHPAfQK5aIoC3pBFa2H0+EAStJVZHWqYGeTh+BQ6VpjxazPsHG2lE5nu2PQLya4jUhVgHKZKOoWzy+6dQbbbMcqEb115dxSlJrQl1//yp/Mveh1Y+ixyNyjjAiScRSiZAWw9b+GPc71Mye9bCFEr+kZLnSVJ1snY3bwlqQ5Nn/sstsEo2UEZZOpuklt+G/H7lgT0XNpw+vjclI5aL1WlrV8UnHA7CHsgfO45en0+1NwnB7rQX9+4uYNXIb+dac0HN7AQRzEB3Dy0+4=</source>
+  </file>
+  <file path="DependencyException.php" generated-path="DependencyException.html" hash="25b41314289273f35173bd7f3fa4ccdb" package="Default">
+    <docblock line="0">
+      <description></description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+    </docblock>
+    <namespace-alias name="ContainerException">\Interop\Container\Exception\ContainerException</namespace-alias>
+    <class final="false" abstract="false" namespace="DI" line="9" package="Default">
+      <extends>\RuntimeException</extends>
+      <implements>\Interop\Container\Exception\ContainerException</implements>
+      <name>DependencyException</name>
+      <full_name>\DI\DependencyException</full_name>
+      <docblock line="9">
+        <description>An error representing a problem with a dependency state.</description>
+        <long-description></long-description>
+        <tag name="package" line="9" description="Default"/>
+      </docblock>
+    </class>
+    <parse_markers>
+      <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
+    </parse_markers>
+    <source>eJxljrEOwjAMRPd8hecO9ANAQogydGXuEtITjdQ4lp2KIsS/k6kdGP1O986ns0zi2CeY+ADq+qNzi4GGngs0y3DNXHxk6HBbA6TEzDvbUG21TeOooQsTVLOSQhQGLpGf5Ek0P2YkesUy1XOEgEdweJMVX3Co3daF2ZtRt2Wbn7CWyoyG+1KNCXsSk1Rv3TH6/4s+7ut+dbhSgg==</source>
+  </file>
+  <package name="Default" full_name="Default"/>
+  <package name="global" full_name="global"/>
+  <namespace name="DI" full_name="DI"/>
+  <deprecated count="0"/>
+</project>
