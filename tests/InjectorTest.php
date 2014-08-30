@@ -8,7 +8,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase {
 		$injector = new Injector();
 		$simpleSpeed = 0;
 		$complexSpeed = 0;
-		$rounds = 10000;
+		$rounds = 1000;
 
 		for($i = 0; $i < $rounds; $i++) {
 			$start = microtime(true);
