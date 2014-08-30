@@ -1,43 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project title="API Documentation" version="2.7.0">
   <partials/>
-  <file path="ReferenceNotFoundException.php" generated-path="ReferenceNotFoundException.html" hash="c0c167369c25a868e06f04725185c688" package="Default">
-    <docblock line="0">
-      <description>This file describes the ReferenceNotFoundException class</description>
-      <long-description></long-description>
-      <tag name="package" line="0" description="Default"/>
-      <tag name="license" line="0" description="MIT" link="http://opensource.org/licenses/MIT"/>
-    </docblock>
-    <class final="false" abstract="false" namespace="DI" line="12" package="Default">
-      <extends>\RuntimeException</extends>
-      <implements>\Interop\Container\Exception\NotFoundException</implements>
-      <name>ReferenceNotFoundException</name>
-      <full_name>\DI\ReferenceNotFoundException</full_name>
-      <docblock line="12">
-        <description>The ReferenceNotFoundException class represents when the {@link \DI\Injector Injector} can't find your specified reference.</description>
-        <long-description></long-description>
-        <tag name="api" line="12" description=""/>
-        <tag name="package" line="12" description="Default"/>
-      </docblock>
-      <method final="false" abstract="false" static="false" visibility="public" namespace="DI" line="17" package="Default">
-        <name>__construct</name>
-        <full_name>\DI\ReferenceNotFoundException::__construct()</full_name>
-        <docblock line="17">
-          <description>Create an instance of the ReferenceNotFoundException class.</description>
-          <long-description></long-description>
-          <tag name="param" line="17" description="&lt;p&gt;The fully qualified class name that couldn't be found&lt;/p&gt;" type="string" variable="$id">
-            <type>string</type>
-          </tag>
-        </docblock>
-        <argument line="0" by_reference="false">
-          <name>$id</name>
-          <default></default>
-          <type>string</type>
-        </argument>
-      </method>
-    </class>
-    <source>eJyNkU1LAzEQhs/NrxiKYlukvVfBQquwBz2UHhdKmp11o9lJzAe2lP53Z1NrBUG9JSTzvM/M3N65xonJaCRgBKtGB6i1QagwKK83GCA2CEus0SMpfLLxwSaq7rcKXdSWQBkZQlc7M1ohBYTHYsX3iSDZYnBSISyKG3GO+BsHHp3HgBQDvDdI2WHPAfQK5aIoC3pBFa2H0+EAStJVZHWqYGeTh+BQ6VpjxazPsHG2lE5nu2PQLya4jUhVgHKZKOoWzy+6dQbbbMcqEb115dxSlJrQl1//yp/Mveh1Y+ixyNyjjAiScRSiZAWw9b+GPc71Mye9bCFEr+kZLnSVJ1snY3bwlqQ5Nn/sstsEo2UEZZOpuklt+G/H7lgT0XNpw+vjclI5aL1WlrV8UnHA7CHsgfO45en0+1NwnB7rQX9+4uYNXIb+dac0HN7AQRzEB3Dy0+4=</source>
-  </file>
   <file path="Injector.php" generated-path="Injector.html" hash="8159dba42add4352aa7b257d15b2ae9a" package="Default">
     <docblock line="0">
       <description>This file describes the Injector class</description>
@@ -210,6 +173,43 @@
       <error line="0" code="PPC:ERR-50000">No summary was found for this file</error>
     </parse_markers>
     <source>eJxljrEOwjAMRPd8hecO9ANAQogydGXuEtITjdQ4lp2KIsS/k6kdGP1O986ns0zi2CeY+ADq+qNzi4GGngs0y3DNXHxk6HBbA6TEzDvbUG21TeOooQsTVLOSQhQGLpGf5Ek0P2YkesUy1XOEgEdweJMVX3Co3daF2ZtRt2Wbn7CWyoyG+1KNCXsSk1Rv3TH6/4s+7ut+dbhSgg==</source>
+  </file>
+  <file path="ReferenceNotFoundException.php" generated-path="ReferenceNotFoundException.html" hash="c0c167369c25a868e06f04725185c688" package="Default">
+    <docblock line="0">
+      <description>This file describes the ReferenceNotFoundException class</description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Default"/>
+      <tag name="license" line="0" description="MIT" link="http://opensource.org/licenses/MIT"/>
+    </docblock>
+    <class final="false" abstract="false" namespace="DI" line="12" package="Default">
+      <extends>\RuntimeException</extends>
+      <implements>\Interop\Container\Exception\NotFoundException</implements>
+      <name>ReferenceNotFoundException</name>
+      <full_name>\DI\ReferenceNotFoundException</full_name>
+      <docblock line="12">
+        <description>The ReferenceNotFoundException class represents when the {@link \DI\Injector Injector} can't find your specified reference.</description>
+        <long-description></long-description>
+        <tag name="api" line="12" description=""/>
+        <tag name="package" line="12" description="Default"/>
+      </docblock>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="DI" line="17" package="Default">
+        <name>__construct</name>
+        <full_name>\DI\ReferenceNotFoundException::__construct()</full_name>
+        <docblock line="17">
+          <description>Create an instance of the ReferenceNotFoundException class.</description>
+          <long-description></long-description>
+          <tag name="param" line="17" description="&lt;p&gt;The fully qualified class name that couldn't be found&lt;/p&gt;" type="string" variable="$id">
+            <type>string</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$id</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+    </class>
+    <source>eJyNkU1LAzEQhs/NrxiKYlukvVfBQquwBz2UHhdKmp11o9lJzAe2lP53Z1NrBUG9JSTzvM/M3N65xonJaCRgBKtGB6i1QagwKK83GCA2CEus0SMpfLLxwSaq7rcKXdSWQBkZQlc7M1ohBYTHYsX3iSDZYnBSISyKG3GO+BsHHp3HgBQDvDdI2WHPAfQK5aIoC3pBFa2H0+EAStJVZHWqYGeTh+BQ6VpjxazPsHG2lE5nu2PQLya4jUhVgHKZKOoWzy+6dQbbbMcqEb115dxSlJrQl1//yp/Mveh1Y+ixyNyjjAiScRSiZAWw9b+GPc71Mye9bCFEr+kZLnSVJ1snY3bwlqQ5Nn/sstsEo2UEZZOpuklt+G/H7lgT0XNpw+vjclI5aL1WlrV8UnHA7CHsgfO45en0+1NwnB7rQX9+4uYNXIb+dac0HN7AQRzEB3Dy0+4=</source>
   </file>
   <package name="Default" full_name="Default"/>
   <package name="global" full_name="global"/>
