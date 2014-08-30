@@ -28,7 +28,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testThrowsOnUnknownDependency() {
-		$this->setExpectedException('\DI\ReferenceNotFoundException');
+		$this->setExpectedException(\DI\ReferenceNotFoundException::class);
 		$injector = new Injector();
 		$injector->get('\\UnknownClass');
 	}
@@ -52,6 +52,13 @@ class InjectorTest extends \PHPUnit_Framework_TestCase {
 			$phpunit->assertInstanceOf(A::class, $d->c->a);
 		});
 		$fn();
+	}
+
+	public function testRetrievesDependenciesFromCacheDuringResolution() {
+		$injector = new Injector();
+		$a = $injector->get(A::class);
+		$c = $injector->get(C::class);
+		$this->assertInstanceOf(A::class, $c->a);
 	}
 
 	public function testSupportsArrayCallableNotation() {
@@ -126,6 +133,28 @@ class InjectorTest extends \PHPUnit_Framework_TestCase {
 		$this->assertSame($a, $aprime);
 	}
 
+	public function testHasChecksForInstances() {
+		$injector = new Injector();
+		$this->assertFalse($injector->has(A::class));
+		$a = $injector->get(A::class);
+		$this->assertTrue($injector->has(A::class));
+	}
+
+	public function testHasFollowsUpIntoParentInjectors() {
+		$injector = new Injector();
+		$child = new Injector($injector);
+		$this->assertFalse($injector->has(A::class));
+		$this->assertFalse($child->has(A::class));
+		$a = $injector->get(A::class);
+		$this->assertTrue($child->has(A::class));
+	}
+
+	public function testThrowsForNonInstantiableDependencies() {
+		$injector = new Injector();
+		$this->setExpectedException(\DI\DependencyException::class);
+		$injector->instantiate(K::class);
+	}
+
 	public function testResolvesFromAnInterface() {
 		$this->markTestIncomplete('Resolving an unknown subclass from an interface is impossible!');
 		$injector = new Injector();
@@ -177,3 +206,5 @@ class H {}
 class I implements G {}
 
 class J extends H {}
+
+abstract class K {}
